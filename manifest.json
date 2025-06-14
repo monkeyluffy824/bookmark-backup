@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Bookmark_Backup",
+  "version": "1.0.0",
+  "description": "This is an browser ezxtension, which will be used to backup bookmarks and restore bookmarks from one to another browsers.",
+  "icons": {
+    "16": "icons/bookmarks-icon.png",
+    "48": "icons/bookmarks-icon.png",
+    "128": "icons/bookmarks-icon.png"
+  },
+  "action": {
+    "default_icon": "icons/bookmarks-icon.png",
+    "default_title": "Backup Bookmarks"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "bookmarks",
+	"tabs"
+  ],
+   "host_permissions": ["<all_urls>"]
+}
