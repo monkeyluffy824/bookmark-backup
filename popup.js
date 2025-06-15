@@ -8,8 +8,27 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("backupBookmarks").addEventListener("click", () => {
-    alert("clicked");
+  document.getElementById("fileUpload").addEventListener("change", async () => {
+		const input = document.getElementById('fileUpload');
+		console.log(JSON.stringify(input));
+		const file = input.files[0];
+
+		if (!file) {
+			alert("No file selected");
+			return;
+		}
+		
+		const reader = new FileReader();
+		 reader.onload = function(event) {
+				const fileContent = event.target.result;
+				processFileContent(fileContent);
+		};
+
+    reader.onerror = function() {
+        console.error("File reading error:", reader.error);
+    };
+
+    reader.readAsText(file);
   });
 });
 
@@ -50,3 +69,57 @@ function createcsv(obj){
 		alert('You dont have any bookmarks');
 	}
 }
+
+
+async function processFileContent(content) {
+	let tex=content.toString();
+	let rows=tex.split('\n');
+	if(rows[0]==='title;url'){
+		let id= await getBookmarksBarId();
+		if(id!=null){
+			for(let i=1;i<rows.length;i++){
+			let dat=rows[i].split(';');
+			if(dat.length===2){
+				let bookObj={
+				'parentId':id,
+				'title':dat[0],
+				'url':dat[1],
+				}
+				chrome.bookmarks.create(bookObj);
+			}
+			
+		}
+		alert('The bookmarks created successfully;');
+		}
+		
+	}else{
+		alert('The incorrect file is uploaded');
+		return;
+	}
+	
+}
+
+function getTreePromise() {
+  return new Promise((resolve) => {
+    chrome.bookmarks.getTree(resolve);
+  });
+}
+
+async function getBookmarksBarId() {
+  const tree = await getTreePromise();
+
+  function findToolbar(node) {
+	console.log(node.title);
+    if (["Bookmarks Bar", "Bookmarks Toolbar", "Favorites bar"].includes(node.title)) {
+      return node.id;
+    }
+    for (let child of node.children || []) {
+      const result = findToolbar(child);
+      if (result) return result;
+    }
+    return null;
+  }
+
+  return findToolbar(tree[0]);
+}
+
