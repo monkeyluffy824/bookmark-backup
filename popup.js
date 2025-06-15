@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("fileUpload").addEventListener("change", async () => {
 		const input = document.getElementById('fileUpload');
-		console.log(JSON.stringify(input));
 		const file = input.files[0];
 
 		if (!file) {
@@ -109,7 +108,6 @@ async function getBookmarksBarId() {
   const tree = await getTreePromise();
 
   function findToolbar(node) {
-	console.log(node.title);
     if (["Bookmarks Bar", "Bookmarks Toolbar", "Favorites bar"].includes(node.title)) {
       return node.id;
     }
